@@ -8,6 +8,8 @@ networks:
 volumes:
   postgres-vol:
     driver: local
+  redis-vol:
+    driver: local
 
 services:
 
@@ -58,6 +60,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
       PORT: ${APP_PORT}
       NODE_ENV: production
 
@@ -66,6 +70,8 @@ services:
 
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - postgres-net
@@ -77,4 +83,33 @@ services:
         max-file: 5
 
     command: [ "npm", "run", "start" ]
+    restart: unless-stopped
+
+
+  redis:
+    container_name: redis
+
+    image: redis:7.2-alpine
+
+    command: [ "redis-server", "--appendonly", "yes" ]
+
+    volumes:
+      - redis-vol:/data
+
+    networks:
+      - postgres-net
+
+    expose:
+      - ${REDIS_PORT}
+
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
     restart: unless-stopped
