@@ -1,4 +1,4 @@
-import { migrate, seed } from "#postgres/knex.js";
+import { migrate, seed } from "@/postgres/knex.js";
 import { Command } from "commander";
 const program = new Command();
 

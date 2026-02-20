@@ -1,4 +1,4 @@
-import env from "#config/env/env.js";
+import env from "@/config/env/env.js";
 import { Knex } from "knex";
 import { z } from "zod";
 
