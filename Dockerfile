@@ -22,3 +22,13 @@ WORKDIR /app
 COPY --from=build /app/package*.json .
 COPY --from=deps-prod /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+
+FROM node:20-alpine AS dev
+
+WORKDIR /app
+
+COPY ./package*.json .
+
+RUN npm install --include=dev
+
+COPY . .
