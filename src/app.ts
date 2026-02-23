@@ -8,12 +8,15 @@ import {
     createTariffsJobOptions,
     createTariffsQueue,
 } from "@/queues/tariffs-queue.js";
-import logger from "@/utils/logger.js";
 
 await migrate.latest();
 await seed.run();
 
-const app = fastify({ logger });
+const app = fastify({
+    logger: {
+        level: process.env.LOG_LEVEL ?? "info",
+    },
+});
 
 const tariffsQueue = createTariffsQueue();
 

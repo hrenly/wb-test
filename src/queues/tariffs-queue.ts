@@ -1,13 +1,25 @@
 import { Queue, Worker, type JobsOptions } from "bullmq";
 
 import env from "@/config/env/env.js";
+import logger from "@/utils/logger.js";
 
 const connection = {
     host: env.REDIS_HOST,
     port: env.REDIS_PORT,
 };
 
-export const tariffsQueueName = env.WB_TARIFFS_QUEUE_NAME;
+const normalizeQueueName = (name: string) => name.replace(/:/g, "-");
+
+export const tariffsQueueName = normalizeQueueName(env.WB_TARIFFS_QUEUE_NAME);
+if (tariffsQueueName !== env.WB_TARIFFS_QUEUE_NAME) {
+    logger.warn(
+        {
+            original: env.WB_TARIFFS_QUEUE_NAME,
+            normalized: tariffsQueueName,
+        },
+        "WB_TARIFFS_QUEUE_NAME contains ':'; using normalized name",
+    );
+}
 
 export const createTariffsQueue = () => {
     return new Queue(tariffsQueueName, { connection });
