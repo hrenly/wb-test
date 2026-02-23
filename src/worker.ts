@@ -1,15 +1,28 @@
 import env from "@/config/env/env.js";
-import { fetchTariffs } from "@/services/tariffs.js";
+import knex from "@/postgres/knex.js";
 import { createTariffsWorker } from "@/queues/tariffs-queue.js";
+import { createTariffsJobHandler } from "@/handlers/tariffs-job.handler.js";
 import logger from "@/utils/logger.js";
 
+const handleTariffsJob = createTariffsJobHandler(knex);
+
 const worker = createTariffsWorker(async ({ date }) => {
-    await fetchTariffs(date);
+    await handleTariffsJob({ date });
+});
+
+worker.on("active", (job) => {
+    const jobId = job?.id ?? "unknown";
+    logger.info({ jobId, date: job?.data?.date }, "Tariffs job started");
+});
+
+worker.on("completed", (job, result) => {
+    const jobId = job?.id ?? "unknown";
+    logger.info({ jobId, date: job?.data?.date, result }, "Tariffs job finished");
 });
 
 worker.on("failed", (job, err) => {
     const jobId = job?.id ?? "unknown";
-    logger.error({ jobId, err }, "Tariffs job failed");
+    logger.error({ jobId, date: job?.data?.date, err }, "Tariffs job failed");
 });
 
 const shutdown = async () => {

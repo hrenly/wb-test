@@ -1,8 +1,8 @@
 import fastify from "fastify";
 import env from "@/config/env/env.js";
 import { migrate, seed } from "@/postgres/knex.js";
-import { createHealthHandler } from "@/handlers/health.js";
-import { createGetTariffsHandler } from "@/handlers/tariffs.js";
+import { createHealthHandler } from "@/handlers/health.handler.js";
+import { createGetTariffsHandler } from "@/handlers/tariffs.handler.js";
 import { registerRoutes } from "@/routes.js";
 import {
     createTariffsJobOptions,

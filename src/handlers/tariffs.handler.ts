@@ -1,9 +1,4 @@
-import type {
-    RawReplyDefaultExpression,
-    RawRequestDefaultExpression,
-    RawServerDefault,
-    RouteHandlerMethod,
-} from "fastify";
+import type { RouteHandlerMethod } from "fastify";
 
 import { getErrorStatus } from "@/utils/http.js";
 
@@ -21,14 +16,9 @@ const extractDateParam = (query: TariffsQuery) => String(query.date ?? "");
 
 export const createGetTariffsHandler = (
     { enqueueTariffsJob }: Pick<TariffsHandlerDeps, "enqueueTariffsJob">,
-): RouteHandlerMethod<
-    RawServerDefault,
-    RawRequestDefaultExpression,
-    RawReplyDefaultExpression,
-    { Querystring: TariffsQuery }
-> => {
+): RouteHandlerMethod => {
     return async (request, reply) => {
-        const date = extractDateParam(request.query);
+        const date = extractDateParam(request.query as TariffsQuery);
         const targetDate = date || new Date().toISOString().slice(0, 10);
 
         if (!DATE_REGEX.test(targetDate)) {
