@@ -7,7 +7,7 @@ import { registerRoutes } from "@/routes.js";
 import {
     createTariffsJobOptions,
     createTariffsQueue,
-} from "@/queues/tariffs-queue.js";
+} from "@/queues/tariffs.queue.js";
 
 await migrate.latest();
 await seed.run();

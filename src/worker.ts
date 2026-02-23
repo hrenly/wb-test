@@ -1,6 +1,6 @@
 import env from "@/config/env/env.js";
 import knex from "@/postgres/knex.js";
-import { createTariffsWorker } from "@/queues/tariffs-queue.js";
+import { createTariffsWorker } from "@/queues/tariffs.queue.js";
 import { createTariffsJobHandler } from "@/handlers/tariffs-job.handler.js";
 import logger from "@/utils/logger.js";
 

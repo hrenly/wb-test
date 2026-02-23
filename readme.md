@@ -48,10 +48,20 @@ npm run dev:worker
 npm run dev:scheduler
 ```
 
+Для запуска экспортов в Google Sheets (dev):
+```bash
+npm run dev:sheets-scheduler
+npm run dev:sheets-worker
+```
+
 Dev‑запуск в Docker (app + worker + scheduler):
 ```bash
 docker compose up --build
 ```
+
+Sheets‑сервисы в Docker:
+- `sheets-scheduler-init` регистрирует repeatable job `sheets:export:tick` с cron из `SHEETS_EXPORT_CRON` и завершает работу.
+- `sheets-worker` обрабатывает export‑jobs и обновляет лист `stocks_coefs`.
 
 Проверка health‑эндпоинта:
 ```bash
@@ -61,6 +71,10 @@ curl -s http://localhost:${APP_PORT}/api/v1/health
 Примечание про scheduler-init:
 - `scheduler-init` — однократный запуск. При старте он регистрирует repeatable job `tariffs:hourly` с cron `0 * * * *` и завершает работу.
 - Повторные запуски не дублируют расписание, оно хранится в Redis.
+
+Примечание про sheets scheduler-init:
+- `sheets-scheduler-init` регистрирует repeatable job `sheets:export:tick` с cron из `SHEETS_EXPORT_CRON`.
+- `sheets-worker` обрабатывает export jobs и обновляет лист `stocks_coefs`.
 
 Запуск проверки самого приложения (prod‑режим app‑сервиса):
 ```bash

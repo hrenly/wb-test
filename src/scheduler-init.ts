@@ -1,4 +1,4 @@
-import { createTariffsJobOptions, createTariffsQueue } from "@/queues/tariffs-queue.js";
+import { createTariffsJobOptions, createTariffsQueue } from "@/queues/tariffs.queue.js";
 import logger from "@/utils/logger.js";
 
 const queue = createTariffsQueue();

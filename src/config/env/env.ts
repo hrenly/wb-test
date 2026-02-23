@@ -32,6 +32,11 @@ const envSchema = z.object({
         .string()
         .regex(/^[0-9]+$/)
         .transform((value) => parseInt(value)),
+    SHEETS_TARIFFS_SHEET_NAME: z.string(),
+    GOOGLE_SERVICE_ACCOUNT_JSON: z.string(),
+    GOOGLE_APPLICATION_CREDENTIALS: z.string(),
+    EXPORT_TIMEZONE: z.string(),
+    SHEETS_EXPORT_CRON: z.string(),
     APP_PORT: z
         .string()
         .regex(/^[0-9]+$/)
@@ -52,6 +57,11 @@ const envResult = envSchema.safeParse({
     WB_TARIFFS_JOB_ATTEMPTS: process.env.WB_TARIFFS_JOB_ATTEMPTS,
     WB_TARIFFS_BACKOFF_DELAY_MS: process.env.WB_TARIFFS_BACKOFF_DELAY_MS,
     WB_TARIFFS_WORKER_CONCURRENCY: process.env.WB_TARIFFS_WORKER_CONCURRENCY,
+    SHEETS_TARIFFS_SHEET_NAME: process.env.SHEETS_TARIFFS_SHEET_NAME,
+    GOOGLE_SERVICE_ACCOUNT_JSON: process.env.GOOGLE_SERVICE_ACCOUNT_JSON,
+    GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    EXPORT_TIMEZONE: process.env.EXPORT_TIMEZONE,
+    SHEETS_EXPORT_CRON: process.env.SHEETS_EXPORT_CRON,
     NODE_ENV: process.env.NODE_ENV,
     APP_PORT: process.env.APP_PORT,
 });
