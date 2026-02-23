@@ -1,0 +1,104 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    command: ["npm", "run", "dev"]
+    environment:
+      NODE_ENV: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      WB_TARIFFS_BOX_URL: ${WB_TARIFFS_BOX_URL}
+      WB_TARIFFS_AUTH_TOKEN: ${WB_TARIFFS_AUTH_TOKEN}
+      WB_TARIFFS_QUEUE_NAME: ${WB_TARIFFS_QUEUE_NAME}
+      WB_TARIFFS_JOB_ATTEMPTS: ${WB_TARIFFS_JOB_ATTEMPTS}
+      WB_TARIFFS_BACKOFF_DELAY_MS: ${WB_TARIFFS_BACKOFF_DELAY_MS}
+      WB_TARIFFS_WORKER_CONCURRENCY: ${WB_TARIFFS_WORKER_CONCURRENCY}
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    networks:
+      - postgres-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    command: ["npm", "run", "dev:worker"]
+    environment:
+      NODE_ENV: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      WB_TARIFFS_BOX_URL: ${WB_TARIFFS_BOX_URL}
+      WB_TARIFFS_AUTH_TOKEN: ${WB_TARIFFS_AUTH_TOKEN}
+      WB_TARIFFS_QUEUE_NAME: ${WB_TARIFFS_QUEUE_NAME}
+      WB_TARIFFS_JOB_ATTEMPTS: ${WB_TARIFFS_JOB_ATTEMPTS}
+      WB_TARIFFS_BACKOFF_DELAY_MS: ${WB_TARIFFS_BACKOFF_DELAY_MS}
+      WB_TARIFFS_WORKER_CONCURRENCY: ${WB_TARIFFS_WORKER_CONCURRENCY}
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+    networks:
+      - postgres-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    command: ["npm", "run", "dev:scheduler"]
+    environment:
+      NODE_ENV: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      WB_TARIFFS_BOX_URL: ${WB_TARIFFS_BOX_URL}
+      WB_TARIFFS_AUTH_TOKEN: ${WB_TARIFFS_AUTH_TOKEN}
+      WB_TARIFFS_QUEUE_NAME: ${WB_TARIFFS_QUEUE_NAME}
+      WB_TARIFFS_JOB_ATTEMPTS: ${WB_TARIFFS_JOB_ATTEMPTS}
+      WB_TARIFFS_BACKOFF_DELAY_MS: ${WB_TARIFFS_BACKOFF_DELAY_MS}
+      WB_TARIFFS_WORKER_CONCURRENCY: ${WB_TARIFFS_WORKER_CONCURRENCY}
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+    networks:
+      - postgres-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
