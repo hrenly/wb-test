@@ -53,6 +53,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: prod
 
     environment:
       POSTGRES_HOST: postgres
@@ -97,6 +98,80 @@ services:
 
     command: [ "npm", "run", "start" ]
     restart: unless-stopped
+
+
+  tariffs-worker:
+    container_name: tariffs-worker
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      WB_TARIFFS_BOX_URL: ${WB_TARIFFS_BOX_URL}
+      WB_TARIFFS_AUTH_TOKEN: ${WB_TARIFFS_AUTH_TOKEN}
+      WB_TARIFFS_QUEUE_NAME: ${WB_TARIFFS_QUEUE_NAME}
+      WB_TARIFFS_JOB_ATTEMPTS: ${WB_TARIFFS_JOB_ATTEMPTS}
+      WB_TARIFFS_BACKOFF_DELAY_MS: ${WB_TARIFFS_BACKOFF_DELAY_MS}
+      WB_TARIFFS_WORKER_CONCURRENCY: ${WB_TARIFFS_WORKER_CONCURRENCY}
+      NODE_ENV: production
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    networks:
+      - postgres-net
+
+    command: [ "npm", "run", "worker" ]
+    restart: always
+
+
+  tariffs-scheduler-init:
+    container_name: tariffs-scheduler-init
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      WB_TARIFFS_BOX_URL: ${WB_TARIFFS_BOX_URL}
+      WB_TARIFFS_AUTH_TOKEN: ${WB_TARIFFS_AUTH_TOKEN}
+      WB_TARIFFS_QUEUE_NAME: ${WB_TARIFFS_QUEUE_NAME}
+      WB_TARIFFS_JOB_ATTEMPTS: ${WB_TARIFFS_JOB_ATTEMPTS}
+      WB_TARIFFS_BACKOFF_DELAY_MS: ${WB_TARIFFS_BACKOFF_DELAY_MS}
+      WB_TARIFFS_WORKER_CONCURRENCY: ${WB_TARIFFS_WORKER_CONCURRENCY}
+      NODE_ENV: production
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    networks:
+      - postgres-net
+
+    command: [ "npm", "run", "scheduler" ]
+    restart: "no"
 
 
   redis:

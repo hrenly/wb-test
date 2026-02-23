@@ -74,7 +74,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dev
-    command: ["npm", "run", "dev:scheduler"]
+    command: ["npx", "tsx", "src/scheduler-init.ts"]
     environment:
       NODE_ENV: development
       POSTGRES_HOST: postgres

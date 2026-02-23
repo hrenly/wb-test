@@ -8,16 +8,14 @@ const connection = {
     port: env.REDIS_PORT,
 };
 
-const normalizeQueueName = (name: string) => name.replace(/:/g, "-");
-
-export const tariffsQueueName = normalizeQueueName(env.WB_TARIFFS_QUEUE_NAME);
-if (tariffsQueueName !== env.WB_TARIFFS_QUEUE_NAME) {
+export const tariffsQueueName = "tariffs-queue";
+if (env.WB_TARIFFS_QUEUE_NAME && env.WB_TARIFFS_QUEUE_NAME !== tariffsQueueName) {
     logger.warn(
         {
-            original: env.WB_TARIFFS_QUEUE_NAME,
-            normalized: tariffsQueueName,
+            configured: env.WB_TARIFFS_QUEUE_NAME,
+            effective: tariffsQueueName,
         },
-        "WB_TARIFFS_QUEUE_NAME contains ':'; using normalized name",
+        "WB_TARIFFS_QUEUE_NAME is ignored; using fixed queue name",
     );
 }
 
@@ -26,12 +24,12 @@ export const createTariffsQueue = () => {
 };
 
 export const createTariffsWorker = (
-    processor: (payload: { date: string }) => Promise<void>,
+    processor: (payload: { date?: string }) => Promise<void>,
 ) => {
     return new Worker(
         tariffsQueueName,
         async (job) => {
-            await processor(job.data as { date: string });
+            await processor(job.data as { date?: string });
         },
         {
             connection,

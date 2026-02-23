@@ -26,7 +26,7 @@ app.addHook("onClose", async () => {
 
 const enqueueTariffsJob = async (date: string) => {
     await tariffsQueue.add(
-        "getTariffs",
+        "tariffs:hourly",
         { date },
         createTariffsJobOptions(),
     );

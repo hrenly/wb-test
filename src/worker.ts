@@ -12,17 +12,26 @@ const worker = createTariffsWorker(async ({ date }) => {
 
 worker.on("active", (job) => {
     const jobId = job?.id ?? "unknown";
-    logger.info({ jobId, date: job?.data?.date }, "Tariffs job started");
+    logger.info(
+        { jobId, date: job?.data?.date, name: job?.name },
+        "Tariffs job started",
+    );
 });
 
 worker.on("completed", (job, result) => {
     const jobId = job?.id ?? "unknown";
-    logger.info({ jobId, date: job?.data?.date, result }, "Tariffs job finished");
+    logger.info(
+        { jobId, date: job?.data?.date, name: job?.name, result },
+        "Tariffs job finished",
+    );
 });
 
 worker.on("failed", (job, err) => {
     const jobId = job?.id ?? "unknown";
-    logger.error({ jobId, date: job?.data?.date, err }, "Tariffs job failed");
+    logger.error(
+        { jobId, date: job?.data?.date, name: job?.name, err },
+        "Tariffs job failed",
+    );
 });
 
 const shutdown = async () => {
@@ -34,7 +43,7 @@ process.on("SIGTERM", shutdown);
 
 logger.info(
     {
-        queue: env.WB_TARIFFS_QUEUE_NAME,
+        queue: "tariffs-queue",
         concurrency: env.WB_TARIFFS_WORKER_CONCURRENCY,
     },
     "Tariffs worker started",
