@@ -40,6 +40,10 @@ registerRoutes(app, {
     getTariffsHandler,
 });
 
+if (!env.APP_PORT) {
+    throw new Error("APP_PORT is not configured");
+}
+
 const port = env.APP_PORT;
 const host = "0.0.0.0";
 

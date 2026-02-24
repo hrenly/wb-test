@@ -76,6 +76,14 @@ curl -s http://localhost:${APP_PORT}/api/v1/health
 - `sheets-scheduler-init` регистрирует repeatable job `sheets:export:tick` с cron из `SHEETS_EXPORT_CRON`.
 - `sheets-worker` обрабатывает export jobs и обновляет лист `stocks_coefs`.
 
+Prod: Google credentials через файл
+- Укажи абсолютный путь к файлу в `GOOGLE_CREDENTIALS_PATH`.
+- В контейнере файл будет доступен по пути `/run/secrets/google-sa.json`.
+- Пример:
+```
+GOOGLE_CREDENTIALS_PATH=/absolute/path/to/google-sa.json
+```
+
 Запуск проверки самого приложения (prod‑режим app‑сервиса):
 ```bash
 docker compose up -d --build app

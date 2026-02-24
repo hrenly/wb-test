@@ -92,7 +92,7 @@ const worker = createSheetsExportWorker(async (payload) => {
     }
 
     for (const target of exportJobs) {
-        const jobId = `sheets:export:sheet:${target.id}:${sourceFetchedAt}`;
+        const jobId = `sheets-export-sheet-${target.id}-${sourceFetchedAt}`;
         await queue.add(
             "sheets:export:sheet",
             {

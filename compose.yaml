@@ -191,8 +191,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: ${REDIS_PORT}
       SHEETS_TARIFFS_SHEET_NAME: ${SHEETS_TARIFFS_SHEET_NAME}
-      GOOGLE_SERVICE_ACCOUNT_JSON: ${GOOGLE_SERVICE_ACCOUNT_JSON}
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+      GOOGLE_CREDENTIALS_PATH: /run/secrets/google-sa.json
       EXPORT_TIMEZONE: ${EXPORT_TIMEZONE}
       SHEETS_EXPORT_CRON: ${SHEETS_EXPORT_CRON}
       NODE_ENV: production
@@ -205,6 +204,9 @@ services:
 
     networks:
       - postgres-net
+
+    volumes:
+      - ${GOOGLE_CREDENTIALS_PATH}:/run/secrets/google-sa.json:ro
 
     command: [ "npm", "run", "sheets-worker" ]
     restart: always
@@ -227,8 +229,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: ${REDIS_PORT}
       SHEETS_TARIFFS_SHEET_NAME: ${SHEETS_TARIFFS_SHEET_NAME}
-      GOOGLE_SERVICE_ACCOUNT_JSON: ${GOOGLE_SERVICE_ACCOUNT_JSON}
-      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+      GOOGLE_CREDENTIALS_PATH: /run/secrets/google-sa.json
       EXPORT_TIMEZONE: ${EXPORT_TIMEZONE}
       SHEETS_EXPORT_CRON: ${SHEETS_EXPORT_CRON}
       NODE_ENV: production
@@ -241,6 +242,9 @@ services:
 
     networks:
       - postgres-net
+
+    volumes:
+      - ${GOOGLE_CREDENTIALS_PATH}:/run/secrets/google-sa.json:ro
 
     command: [ "npm", "run", "sheets-scheduler" ]
     restart: "no"

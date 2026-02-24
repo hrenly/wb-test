@@ -6,16 +6,11 @@ import env from "@/config/env/env.js";
 const SHEETS_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
 const loadCredentials = async () => {
-    if (env.GOOGLE_SERVICE_ACCOUNT_JSON) {
-        return JSON.parse(env.GOOGLE_SERVICE_ACCOUNT_JSON);
+    if (!env.GOOGLE_CREDENTIALS_PATH) {
+        throw new Error("GOOGLE_CREDENTIALS_PATH is not configured");
     }
-
-    if (env.GOOGLE_APPLICATION_CREDENTIALS) {
-        const raw = await readFile(env.GOOGLE_APPLICATION_CREDENTIALS, "utf-8");
-        return JSON.parse(raw);
-    }
-
-    throw new Error("Google credentials are not configured");
+    const raw = await readFile(env.GOOGLE_CREDENTIALS_PATH, "utf-8");
+    return JSON.parse(raw);
 };
 
 export const createSheetsClient = async () => {

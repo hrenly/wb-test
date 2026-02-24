@@ -24,7 +24,7 @@ const formatDateCell = (value: string | Date | null) => {
 
 const formatTimestampCell = (value: Date | null) => {
     if (!value) return "";
-    return value.toISOString();
+    return value.toISOString().replace("T", " ").replace("Z", "").split(".")[0];
 };
 
 const normalizeCell = (value: string | number | null) => {
@@ -95,7 +95,7 @@ const updateSheet = async (
     await sheets.spreadsheets.values.update({
         spreadsheetId,
         range: `${env.SHEETS_TARIFFS_SHEET_NAME}!A1`,
-        valueInputOption: "RAW",
+        valueInputOption: "USER_ENTERED",
         requestBody: {
             values,
         },

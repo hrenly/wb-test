@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 import { z } from "zod";
 dotenv.config();
 
-const envSchema = z.object({
+const envSchema = z
+    .object({
     NODE_ENV: z.enum(["development", "production"]),
     POSTGRES_HOST: z.string(),
     POSTGRES_PORT: z
@@ -32,16 +33,16 @@ const envSchema = z.object({
         .string()
         .regex(/^[0-9]+$/)
         .transform((value) => parseInt(value)),
-    SHEETS_TARIFFS_SHEET_NAME: z.string(),
-    GOOGLE_SERVICE_ACCOUNT_JSON: z.string(),
-    GOOGLE_APPLICATION_CREDENTIALS: z.string(),
-    EXPORT_TIMEZONE: z.string(),
-    SHEETS_EXPORT_CRON: z.string(),
+    SHEETS_TARIFFS_SHEET_NAME: z.string().optional(),
+    GOOGLE_CREDENTIALS_PATH: z.string().optional(),
+    EXPORT_TIMEZONE: z.string().optional(),
+    SHEETS_EXPORT_CRON: z.string().optional(),
     APP_PORT: z
         .string()
         .regex(/^[0-9]+$/)
-        .transform((value) => parseInt(value)),
-});
+        .transform((value) => parseInt(value))
+        .optional(),
+    });
 
 const envResult = envSchema.safeParse({
     POSTGRES_HOST: process.env.POSTGRES_HOST,
@@ -58,8 +59,7 @@ const envResult = envSchema.safeParse({
     WB_TARIFFS_BACKOFF_DELAY_MS: process.env.WB_TARIFFS_BACKOFF_DELAY_MS,
     WB_TARIFFS_WORKER_CONCURRENCY: process.env.WB_TARIFFS_WORKER_CONCURRENCY,
     SHEETS_TARIFFS_SHEET_NAME: process.env.SHEETS_TARIFFS_SHEET_NAME,
-    GOOGLE_SERVICE_ACCOUNT_JSON: process.env.GOOGLE_SERVICE_ACCOUNT_JSON,
-    GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    GOOGLE_CREDENTIALS_PATH: process.env.GOOGLE_CREDENTIALS_PATH,
     EXPORT_TIMEZONE: process.env.EXPORT_TIMEZONE,
     SHEETS_EXPORT_CRON: process.env.SHEETS_EXPORT_CRON,
     NODE_ENV: process.env.NODE_ENV,
