@@ -3,24 +3,24 @@
 ## 1. Данные для запуска проекта
 
 ### Обязательные переменные окружения
-- `POSTGRES_HOST`
-- `POSTGRES_PORT`
-- `POSTGRES_DB`
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
-- `REDIS_HOST`
-- `REDIS_PORT`
-- `APP_PORT`
-- `WB_TARIFFS_BOX_URL`
-- `WB_TARIFFS_AUTH_TOKEN`
-- `WB_TARIFFS_QUEUE_NAME`
-- `WB_TARIFFS_JOB_ATTEMPTS`
-- `WB_TARIFFS_BACKOFF_DELAY_MS`
-- `WB_TARIFFS_WORKER_CONCURRENCY`
-- `SHEETS_TARIFFS_SHEET_NAME`
-- `EXPORT_TIMEZONE`
-- `SHEETS_EXPORT_CRON`
-- `GOOGLE_CREDENTIALS_PATH`
+- `POSTGRES_HOST` — хост Postgres.
+- `POSTGRES_PORT` — порт Postgres.
+- `POSTGRES_DB` — имя базы Postgres.
+- `POSTGRES_USER` — пользователь Postgres.
+- `POSTGRES_PASSWORD` — пароль Postgres.
+- `REDIS_HOST` — хост Redis.
+- `REDIS_PORT` — порт Redis.
+- `APP_PORT` — порт API приложения.
+- `WB_TARIFFS_BOX_URL` — URL API тарифов WB (box).
+- `WB_TARIFFS_AUTH_TOKEN` — токен авторизации WB.
+- `WB_TARIFFS_QUEUE_NAME` — имя очереди для тарифов (используется только как конфиг, очередь фиксирована).
+- `WB_TARIFFS_JOB_ATTEMPTS` — кол-во попыток для job.
+- `WB_TARIFFS_BACKOFF_DELAY_MS` — задержка backoff между попытками.
+- `WB_TARIFFS_WORKER_CONCURRENCY` — параллелизм worker для тарифов.
+- `SHEETS_TARIFFS_SHEET_NAME` — имя листа в Google Sheets (по умолчанию `stocks_coefs`).
+- `EXPORT_TIMEZONE` — IANA‑таймзона для расчёта business date.
+- `SHEETS_EXPORT_CRON` — cron‑строка расписания экспорта.
+- `GOOGLE_CREDENTIALS_PATH` — абсолютный путь к JSON ключу сервисного аккаунта.
 
 ### Google credentials
 - Укажи абсолютный путь к файлу JSON сервисного аккаунта в `GOOGLE_CREDENTIALS_PATH`.
