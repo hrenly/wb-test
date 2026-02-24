@@ -1,98 +1,88 @@
-# Шаблон для выполнения тестового задания
+# Получение и выгрузка актуальных тарифов WB в Google Sheets
 
-## Описание
-Шаблон подготовлен для того, чтобы попробовать сократить трудоемкость выполнения тестового задания.
+## 1. Данные для запуска проекта
 
-В шаблоне настоены контейнеры для `postgres`, `redis` и приложения на `nodejs`.  
-Для взаимодействия с БД используется `knex.js`.  
-В контейнере `app` используется `build` для приложения на `ts`, но можно использовать и `js`.
+### Обязательные переменные окружения
+- `POSTGRES_HOST`
+- `POSTGRES_PORT`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `REDIS_HOST`
+- `REDIS_PORT`
+- `APP_PORT`
+- `WB_TARIFFS_BOX_URL`
+- `WB_TARIFFS_AUTH_TOKEN`
+- `WB_TARIFFS_QUEUE_NAME`
+- `WB_TARIFFS_JOB_ATTEMPTS`
+- `WB_TARIFFS_BACKOFF_DELAY_MS`
+- `WB_TARIFFS_WORKER_CONCURRENCY`
+- `SHEETS_TARIFFS_SHEET_NAME`
+- `EXPORT_TIMEZONE`
+- `SHEETS_EXPORT_CRON`
+- `GOOGLE_CREDENTIALS_PATH`
 
-Шаблон не является обязательным!\
-Можно использовать как есть или изменять на свой вкус.
+### Google credentials
+- Укажи абсолютный путь к файлу JSON сервисного аккаунта в `GOOGLE_CREDENTIALS_PATH`.
+- В контейнере файл будет доступен по пути `/run/secrets/google-sa.json` (см. `compose.yaml`).
 
-Все настройки можно найти в файлах:
-- compose.yaml
-- compose.override.yaml
-- dockerfile
-- package.json
-- tsconfig.json
-- src/config/env/env.ts
-- src/config/knex/knexfile.ts
-
-## Команды:
-
-Запуск инфраструктуры (Postgres + Redis):
-```bash
-docker compose up -d --build postgres redis
-```
-
-Для выполнения миграций не из контейнера:
-```bash
-npm run knex:dev migrate latest
-```
-
-Также можно использовать и остальные команды (`migrate make <name>`,`migrate up`, `migrate down` и т.д.)
-
-Для запуска приложения в режиме разработки (локально):
-```bash
-npm run dev
-```
-
-Для запуска воркера в режиме разработки:
-```bash
-npm run dev:worker
-```
-
-Для запуска scheduler-init в режиме разработки:
-```bash
-npm run dev:scheduler
-```
-
-Для запуска экспортов в Google Sheets (dev):
-```bash
-npm run dev:sheets-scheduler
-npm run dev:sheets-worker
-```
-
-Dev‑запуск в Docker (app + worker + scheduler):
-```bash
-docker compose up --build
-```
-
-Sheets‑сервисы в Docker:
-- `sheets-scheduler-init` регистрирует repeatable job `sheets:export:tick` с cron из `SHEETS_EXPORT_CRON` и завершает работу.
-- `sheets-worker` обрабатывает export‑jobs и обновляет лист `stocks_coefs`.
-
-Проверка health‑эндпоинта:
-```bash
-curl -s http://localhost:${APP_PORT}/api/v1/health
-```
-
-Примечание про scheduler-init:
-- `scheduler-init` — однократный запуск. При старте он регистрирует repeatable job `tariffs:hourly` с cron `0 * * * *` и завершает работу.
-- Повторные запуски не дублируют расписание, оно хранится в Redis.
-
-Примечание про sheets scheduler-init:
-- `sheets-scheduler-init` регистрирует repeatable job `sheets:export:tick` с cron из `SHEETS_EXPORT_CRON`.
-- `sheets-worker` обрабатывает export jobs и обновляет лист `stocks_coefs`.
-
-Prod: Google credentials через файл
-- Укажи абсолютный путь к файлу в `GOOGLE_CREDENTIALS_PATH`.
-- В контейнере файл будет доступен по пути `/run/secrets/google-sa.json`.
-- Пример:
+Пример:
 ```
 GOOGLE_CREDENTIALS_PATH=/absolute/path/to/google-sa.json
 ```
 
-Запуск проверки самого приложения (prod‑режим app‑сервиса):
-```bash
-docker compose up -d --build app
-```
+## 2. Назначение контейнеров в Docker
 
-Для финальной проверки рекомендую:
+- `postgres` — база данных.
+- `redis` — очередь BullMQ и хранение расписаний.
+- `app` — HTTP API (endpoint для постановки jobs).
+- `tariffs-worker` — обработчик job по загрузке тарифов.
+- `tariffs-scheduler-init` — одноразовая регистрация repeatable job `tariffs:hourly`.
+- `sheets-worker` — обработчик export jobs в Google Sheets.
+- `sheets-scheduler-init` — одноразовая регистрация repeatable job `sheets:export:tick`.
+
+## 3. Запуск проекта в Docker
+
+### Полный запуск
 ```bash
-docker compose down --rmi local --volumes
 docker compose up --build
 ```
 
-PS: С наилучшими пожеланиями!
+### Проверка health
+```bash
+curl -s http://localhost:${APP_PORT}/api/v1/health
+```
+
+### Перезапуск конкретных сервисов
+```bash
+docker compose up -d app tariffs-worker sheets-worker
+```
+
+## 4. Запуск локально
+
+### Инфраструктура (Postgres + Redis)
+```bash
+docker compose up -d --build postgres redis
+```
+
+### Миграции
+```bash
+npm run knex:dev migrate latest
+```
+
+### Приложение (API)
+```bash
+npm run dev
+```
+
+### Воркеры
+```bash
+npm run dev:worker
+npm run dev:sheets-worker
+```
+
+### Scheduler-init
+```bash
+npm run dev:scheduler
+npm run dev:sheets-scheduler
+```
